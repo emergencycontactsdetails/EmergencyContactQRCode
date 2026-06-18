@@ -453,5 +453,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 document.querySelector('.app-header').addEventListener('click', () => {
-  window.location.href = '/';
+  window.location.href = 'https://emergencycontactsdetails.github.io/EmergencyContactQRCode/';
 });
