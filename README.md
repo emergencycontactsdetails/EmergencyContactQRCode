@@ -17,6 +17,3 @@ Scanning the QR opens a public page showing only the info the user
 ## 🚀 Run Locally
 ```bash
 # any static server works
-npx serve .
-# or
-python3 -m http.server 8080
