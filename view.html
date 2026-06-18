@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4f46e5" />
+  <title>Emergency Contact QR Code — Profile</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E🛡️%3C/text%3E%3C/svg%3E" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="view-body">
+  <header class="app-header">
+    <div class="logo">
+      <span class="logo-icon">🛡️</span>
+      <span class="logo-text">Emergency Contact QR Code</span>
+    </div>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">🌙</button>
+  </header>
+
+  <main class="view-container">
+    <div id="profileCard" class="profile-card glass-card">
+      <p class="muted center">Loading profile…</p>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <small>🔒 This page reads info only from the scanned QR. No tracking.</small>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+  <script type="module" src="js/view.js"></script>
+</body>
+</html>
