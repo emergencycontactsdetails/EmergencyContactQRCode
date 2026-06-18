@@ -452,6 +452,6 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js').catch(()=>{});
   });
 }
-document.querySelector('.app-header').addEventListener('click', () => {
-  window.location.href = 'https://emergencycontactsdetails.github.io/EmergencyContactQRCode/';
-});
+//document.querySelector('.app-header').addEventListener('click', () => {
+//  window.location.href = 'https://emergencycontactsdetails.github.io/EmergencyContactQRCode/';
+//});
