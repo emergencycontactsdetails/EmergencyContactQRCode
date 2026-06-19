@@ -182,6 +182,6 @@ if (!dataStr) {
   if (!data || !data.n) showError('Invalid or corrupted QR data.');
   else renderProfile(data);
 }
-//document.querySelector('.app-header').addEventListener('click', () => {
-//  window.location.href = '/';
-//});
+document.querySelector('.logo-text').addEventListener('click', () => {
+  window.location.href = 'https://emergencycontactsdetails.github.io/EmergencyContactQRCode/';
+});
