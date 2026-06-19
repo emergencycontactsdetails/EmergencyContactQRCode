@@ -1,8 +1,24 @@
 import { FIELD_SECTIONS, VIEW_LABELS, CATEGORY_ICONS } from './fields.js';
 import { encodeData, buildShareURL, toast, fileToBase64, esc, initTheme } from './utils.js';
 
-const STORAGE_KEY = 'tagsafe-draft-v1';
+// ===== FIRST VISIT HARD RELOAD =====
+(function () {
+  const url = new URL(window.location.href);
+
+  if (!url.searchParams.has('firstload')) {
+    url.searchParams.set('firstload', '1');
+    window.location.replace(url.toString());
+  }
+})();
+
 let photoBase64 = null;
+
+// Runtime memory only
+let appState = {
+  fields: {},
+  toggles: {},
+  photo: null
+};
 
 const SOCIAL_BASE = {
   ig: 'https://instagram.com/',
@@ -404,45 +420,74 @@ async function shareLink() {
 
 // ===== DRAFT SAVE/LOAD =====
 function saveDraft() {
-  const state = { fields: {}, toggles: {}, photo: photoBase64 };
-  document.querySelectorAll('#tagForm input, #tagForm select, #tagForm textarea').forEach(el => {
+  appState = {
+    fields: {},
+    toggles: {},
+    photo: photoBase64
+  };
+
+  document.querySelectorAll(
+    '#tagForm input, #tagForm select, #tagForm textarea'
+  ).forEach(el => {
     if (el.dataset.sectionToggle) {
-      state.toggles[el.dataset.sectionToggle] = el.checked;
+      appState.toggles[el.dataset.sectionToggle] = el.checked;
     } else if (el.type !== 'file') {
-      state.fields[el.id] = el.value;
+      appState.fields[el.id] = el.value;
     }
   });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
 function loadDraft() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const state = JSON.parse(raw);
-    Object.entries(state.fields || {}).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el) el.value = val;
-    });
-    Object.entries(state.toggles || {}).forEach(([id, checked]) => {
-      const el = document.querySelector(`[data-section-toggle="${id}"]`);
-      if (el && checked) { el.checked = true; el.closest('.toggle-section').classList.add('active'); }
-    });
-    if (state.photo) photoBase64 = state.photo;
-    updateCounter();
-    updatePreview();
-  } catch {}
+  if (!appState) return;
+
+  Object.entries(appState.fields || {}).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+
+  Object.entries(appState.toggles || {}).forEach(([id, checked]) => {
+    const el = document.querySelector(
+      `[data-section-toggle="${id}"]`
+    );
+
+    if (el && checked) {
+      el.checked = true;
+      el.closest('.toggle-section').classList.add('active');
+    }
+  });
+
+  if (appState.photo) {
+    photoBase64 = appState.photo;
+  }
+
+  updateCounter();
+  updatePreview();
 }
 
 function resetForm() {
-  if (!confirm('Reset all fields? This cannot be undone.')) return;
-  localStorage.removeItem(STORAGE_KEY);
+  if (!confirm('Reset all fields?')) return;
+
+  appState = {
+    fields: {},
+    toggles: {},
+    photo: null
+  };
+
   document.getElementById('tagForm').reset();
-  document.querySelectorAll('.toggle-section.active').forEach(s => s.classList.remove('active'));
+
+  document
+    .querySelectorAll('.toggle-section.active')
+    .forEach(s => s.classList.remove('active'));
+
   photoBase64 = null;
-  document.getElementById('qrSection').classList.add('hidden');
+
+  document
+    .getElementById('qrSection')
+    .classList.add('hidden');
+
   updateCounter();
   updatePreview();
+
   toast('Form reset', 'success');
 }
 
