@@ -64,17 +64,33 @@ function renderOptionalSections() {
 function renderField(f, sensitive) {
   const hint = sensitive ? '<div class="info-hint">ⓘ Visible to anyone who scans your QR</div>' : '';
   let input = '';
+  const max = f.maxLength ? `maxlength="${f.maxLength}"` : '';
   if (f.type === 'select') {
     input = `<select id="${f.id}" name="${f.id}">
       <option value="">-- Select --</option>
       ${f.options.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('')}
     </select>`;
   } else if (f.type === 'textarea') {
-    input = `<textarea id="${f.id}" name="${f.id}" placeholder="${esc(f.placeholder||'')}"></textarea>`;
+    input = `
+  <textarea
+    id="${f.id}"
+    name="${f.id}"
+    placeholder="${esc(f.placeholder || '')}"
+    ${max}
+  ></textarea>
+`;
   } else if (f.type === 'file') {
     input = `<input type="file" id="${f.id}" name="${f.id}" accept="${f.accept||''}" />`;
-  } else {
-    input = `<input type="${f.type}" id="${f.id}" name="${f.id}" placeholder="${esc(f.placeholder||'')}" />`;
+  } else {    
+    input = `
+  <input
+    type="${f.type}"
+    id="${f.id}"
+    name="${f.id}"
+    placeholder="${esc(f.placeholder || '')}"
+    ${max}
+  />
+`;
   }
   return `<div class="field">
     <label for="${f.id}">${f.icon ? f.icon + ' ' : ''}${esc(f.label)}</label>
@@ -205,6 +221,19 @@ let qrInstance = null;
 
 // ===== GENERATE QR (Beautiful styled QR) =====
 function generateQR() {
+
+  const invalidField = [...document.querySelectorAll('#tagForm input, #tagForm textarea')]
+  .find(el => el.maxLength > 0 && el.value.length > el.maxLength);
+
+if (invalidField) {
+  toast(
+    `${invalidField.previousElementSibling?.textContent || 'Field'} exceeds maximum length`,
+    'error'
+  );
+  invalidField.focus();
+  return;
+}
+
   const name = document.getElementById('fullName').value.trim();
   const ec1Name = document.getElementById('ec1Name').value.trim();
   const ec1Phone = document.getElementById('ec1Phone').value.trim();
